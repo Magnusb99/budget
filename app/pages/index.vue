@@ -1,14 +1,17 @@
 <template>
   <div class="w-screen flex flex-wrap justify-center gap-20 py-10">
-    <div class="w-full flex justify-center">
+    <div
+      class="w-full grid lg:flex justify-center grid-cols-12 items-center mb-10 px-5"
+    >
       <UTabs
         v-model="selectedTab"
-        class="utabs w-fit"
+        class="utabs w-fit col-span-11"
         :items="tabItems"
         :unmount-on-hide="false"
         variant="link"
         @update:model-value="(val) => selectTab(String(val))"
       />
+      <UColorModeSwitch class="col-span-1" />
     </div>
     <div class="w-full">
       <component :is="currentComponent?.component" />
