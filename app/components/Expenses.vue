@@ -21,7 +21,6 @@
           <UInput
             v-model="expenseName"
             type="text"
-            inputmode="numeric"
             class="w-full"
           ></UInput>
         </div>
