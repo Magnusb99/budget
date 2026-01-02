@@ -18,14 +18,21 @@
       <USeparator />
       <UFormField class="w-full" label="Namn">
         <div class="flex items-center w-full gap-2">
-          <UInput
-            v-model="expenseName"
-            type="text"
-            class="w-full"
-          ></UInput>
+          <UInput v-model="expenseName" type="text" class="w-full"></UInput>
         </div>
       </UFormField>
-      <UFormField label="Utgift">
+      <UFormField label="Typ av utgift">
+        <div class="flex items-center w-full gap-2">
+          <USelectMenu
+            v-model="expenseType"
+            :items="options"
+            class="w-full"
+            placeholder="Välj typ"
+          >
+          </USelectMenu>
+        </div>
+      </UFormField>
+      <UFormField label="Summa">
         <div class="flex items-center gap-2">
           <UInput
             v-model="expenseInput"
@@ -64,6 +71,7 @@
               @click="removeExpense(value.id)"
             />
             <p>{{ value.name }}</p>
+            <p class=""></p>
             <p class="nr">{{ value.amount }} :-</p>
           </div>
 
@@ -84,10 +92,46 @@
   </UCard>
 </template>
 <script setup lang="ts">
+import type { SelectItem } from "@nuxt/ui";
 const budgetStore = useBudgetStore();
 const toast = useToast();
 const expenseInput = ref<string>("");
 const expenseName = ref<string>("");
+type ExpenseType = {
+  label: string;
+  value: string;
+  class: string;
+};
+
+const options = ref<ExpenseType[]>([
+  {
+    label: "Hyra",
+    value: "#2C369C",
+    class: "bg-[#2C369C] font-bold rounded-md text-shadow-md text-center",
+  },
+  {
+    label: "Mat",
+    value: "#9C2C2C",
+    class: "bg-[#9C2C2C] font-bold rounded-md text-shadow-md text-center",
+  },
+  {
+    label: "Transport",
+    value: "#278717",
+    class: "bg-[#278717] font-bold rounded-md text-shadow-md text-center",
+  },
+  {
+    label: "Underhållning",
+    value: "#671787",
+    class: "bg-[#671787] font-bold rounded-md text-shadow-md text-center",
+  },
+  {
+    label: "Övrigt",
+    value: "#3B3B3B",
+    class: "bg-[#3B3B3B]  font-bold rounded-md text-shadow-md text-center",
+  },
+]);
+
+const expenseType = ref<ExpenseType>({} as ExpenseType);
 
 const addedExpenses = computed(() => {
   return budgetStore.state.value.expenses;
@@ -104,6 +148,7 @@ const expenseValue = computed<number | null>(() => {
 const addExpense = () => {
   const value = expenseValue.value;
   const name = expenseName.value;
+  const type = expenseType.value;
 
   if (value === null) {
     toast.add({
@@ -112,9 +157,10 @@ const addExpense = () => {
     });
     return;
   }
-  budgetStore.addExpense(name, value);
+  budgetStore.addExpense(name, value, type);
   expenseInput.value = "";
   expenseName.value = "";
+  expenseType.value = {} as ExpenseType;
 };
 
 const removeExpense = (id: string) => {

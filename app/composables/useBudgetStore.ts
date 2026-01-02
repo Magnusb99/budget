@@ -1,6 +1,7 @@
 // composables/useBudgetStore.ts
 type Income = { id: string; amount: number };
-type Expense = { id: string; name: string; amount: number };
+type Expense = { id: string; name: string; amount: number; type: {label: string, value: string, class: string} };
+
 
 type BudgetState = {
   incomes: Income[];
@@ -44,11 +45,12 @@ export const useBudgetStore = () => {
     state.value.incomes = state.value.incomes.filter((x) => x.id !== id);
   }
 
-  function addExpense(name: string, amount: number) {
+  function addExpense(name: string, amount: number, type: {label: string, value: string, class: string}) {
     state.value.expenses.push({
       id: crypto.randomUUID(),
       name,
       amount,
+      type,
     });
   }
 

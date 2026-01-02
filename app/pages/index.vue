@@ -7,7 +7,6 @@
         v-model="selectedTab"
         class="utabs w-fit col-span-11"
         :items="tabItems"
-        :unmount-on-hide="false"
         variant="link"
         @update:model-value="(val) => selectTab(String(val))"
       />
