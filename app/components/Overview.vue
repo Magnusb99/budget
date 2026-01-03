@@ -159,6 +159,7 @@ async function pdfButton(
       description:
         "Din PDF ska ha skapats och öppnats i en ny flik. OBS. Kolla din popup-blockerare om du inte ser den.",
       color: "success",
+      duration: 6000,
     });
   }
 }
