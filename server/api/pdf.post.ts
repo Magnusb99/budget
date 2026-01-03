@@ -163,7 +163,7 @@ const chartImg = body.chartPng
     const context = await browser.createBrowserContext();
     const page = await context.newPage();
     await page.goto("about:blank", { waitUntil: "domcontentloaded" });
-    await page.setContent(html, { waitUntil: "networkidle0" });
+    await page.setContent(html, { waitUntil: "domcontentloaded" });
 
     const pdf = await page.pdf({
       format: "A4",
