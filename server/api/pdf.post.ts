@@ -1,7 +1,17 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
+import fs from "node:fs";
 
 
-
+function findLocalChromePath() {
+  const candidates = [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+    "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
+    "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  ];
+  return candidates.find((p) => fs.existsSync(p)) ?? null;
+}
 async function fetchLogo(){
 const res = await fetch("https://bdgt.netlify.app/logo.png");
 const arrayBuffer = await res.arrayBuffer();
@@ -53,6 +63,8 @@ function sumAmounts(rows: Row[]) {
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
+
+    const isNetlify = !!process.env.NETLIFY;
 
   const incomes: Row[] = Array.isArray(body.incomes) ? body.incomes : [];
   const expenses: Row[] = Array.isArray(body.expenses) ? body.expenses : [];
@@ -143,12 +155,23 @@ const chartImg = body.chartPng
       </body>
     </html>
   `;
-
+ const executablePath = isNetlify
+    ? await chromium.executablePath()
+    : process.env.PUPPETEER_EXECUTABLE_PATH || findLocalChromePath();
+    if (!executablePath) {
+    throw createError({
+      statusCode: 500,
+      statusMessage:
+        "No Chrome found locally. Install Chrome or set PUPPETEER_EXECUTABLE_PATH.",
+    });
+  }
   const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-
-    
-    
+    executablePath,
+    headless: true,
+    args: isNetlify
+      ? chromium.args
+      : ["--no-sandbox", "--disable-setuid-sandbox"],
+    defaultViewport: { width: 1280, height: 720 },
   });
 
   try {
