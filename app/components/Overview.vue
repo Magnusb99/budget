@@ -38,7 +38,7 @@
         </template>
       </ClientOnly>
 
-      <UContainer class="w-fit mx-auto mt-5">
+      <UContainer class="w-fit mx-auto mt-5 text-center">
         <UButton
           class="cursor-pointer"
           variant="soft"
@@ -58,11 +58,7 @@
         >
           {{ loading ? "Skapar PDF..." : "Öppna PDF" }}</UButton
         >
-        <p v-if="loading">
-          Det kan ta en liten stund.<b
-            >Kolla så att inte popup:en blir blockerad av webbläsaren</b
-          >
-        </p>
+        <p class="text-center" v-if="loading">Det kan ta en liten stund.</p>
       </UContainer>
     </UContainer>
   </UContainer>
@@ -72,7 +68,7 @@
 const budgetStore = useBudgetStore();
 const loading = ref(false);
 import dayjs from "dayjs";
-
+const toast = useToast();
 const expenses = computed(() => {
   return budgetStore.state.value.expenses;
 });
@@ -158,6 +154,12 @@ async function pdfButton(
     setTimeout(() => URL.revokeObjectURL(url), 30_000);
   } finally {
     loading.value = false;
+    toast.add({
+      title: "PDF skapad",
+      description:
+        "Din PDF ska ha skapats och öppnats i en ny flik. OBS. Kolla din popup-blockerare om du inte ser den.",
+      color: "success",
+    });
   }
 }
 </script>
