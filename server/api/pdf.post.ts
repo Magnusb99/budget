@@ -4,23 +4,7 @@ import chromium from "@sparticuz/chromium";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
-const calFont = fileURLToPath(new URL( "../assets/fonts/Cal.ttf", import.meta.url));
-const calbase = Buffer.from(await readFile(calFont)).toString("base64");
 
-// ✅ TTF-data-url
-const cal = `data:font/ttf;base64,${calbase}`;
-
-const majorFont = fileURLToPath(new URL( "../assets/fonts/Major.ttf", import.meta.url));
-const majorbase = Buffer.from(await readFile(majorFont)).toString("base64");
-
-// ✅ TTF-data-url
-const major = `data:font/ttf;base64,${majorbase}`;
-
-const notoFont = fileURLToPath(new URL( "../assets/fonts/Nato.ttf", import.meta.url));
-const notobase = Buffer.from(await readFile(notoFont)).toString("base64");
-
-// ✅ TTF-data-url
-const noto = `data:font/ttf;base64,${notobase}`;
 
 async function fetchLogo(){
 const res = await fetch("https://bdgt.netlify.app/logo.png");
@@ -72,6 +56,25 @@ function sumAmounts(rows: Row[]) {
 }
 
 export default defineEventHandler(async (event) => {
+  const calFont = fileURLToPath(new URL( "../assets/fonts/Cal.ttf", import.meta.url));
+const calbase = Buffer.from(await readFile(calFont)).toString("base64");
+
+// ✅ TTF-data-url
+const cal = `data:font/ttf;base64,${calbase}`;
+
+const majorFont = fileURLToPath(new URL( "../assets/fonts/Major.ttf", import.meta.url));
+const majorbase = Buffer.from(await readFile(majorFont)).toString("base64");
+
+// ✅ TTF-data-url
+const major = `data:font/ttf;base64,${majorbase}`;
+
+const notoFont = fileURLToPath(new URL( "../assets/fonts/Nato.ttf", import.meta.url));
+const notobase = Buffer.from(await readFile(notoFont)).toString("base64");
+
+// ✅ TTF-data-url
+const noto = `data:font/ttf;base64,${notobase}`;
+
+
   const body = await readBody(event);
 
 
