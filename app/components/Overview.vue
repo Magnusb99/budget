@@ -43,6 +43,7 @@
         <UButton
           variant="soft"
           @click="openpdf(PDFREF)"
+          :color="loading ? 'info' : 'primary'"
           :disabled="loading"
           :icon="loading ? 'svg-spinners:pulse-2' : 'carbon:document-pdf'"
         >
