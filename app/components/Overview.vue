@@ -58,6 +58,11 @@
         >
           {{ loading ? "Skapar PDF..." : "Öppna PDF" }}</UButton
         >
+        <p v-if="loading">
+          Det kan ta en liten stund.<b
+            >Kolla så att inte popup:en blir blockerad av webbläsaren</b
+          >
+        </p>
       </UContainer>
     </UContainer>
   </UContainer>
