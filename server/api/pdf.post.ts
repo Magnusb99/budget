@@ -160,7 +160,8 @@ const chartImg = body.chartPng
 
   try {
     const logo = fetchLogo();
-    const page = await browser.newPage();
+    const context = await browser.createBrowserContext();
+    const page = await context.newPage();
     await page.goto("about:blank", { waitUntil: "domcontentloaded" });
     await page.setContent(html, { waitUntil: "networkidle0" });
 
