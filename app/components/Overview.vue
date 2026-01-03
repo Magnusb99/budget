@@ -7,21 +7,21 @@
 
       <div>
         <h2 class="flex justify-between gap-10">
-          <b>Budget: </b>
+          Budget:
           <span class="nr">{{ budgetStore.balanceWOsavings }} kr</span>
         </h2>
         <USeparator class="mt-3" />
       </div>
       <div>
         <h2 class="flex justify-between gap-10">
-          <b>Per dag: </b>
+          Per dag:
           <span class="nr">~{{ salaryInfo.perDay }} kr</span>
         </h2>
         <USeparator class="mt-3" />
       </div>
       <div>
         <h2 class="flex justify-between gap-10">
-          <b>Per vecka: </b>
+          Per vecka:
           <span class="nr">~{{ salaryInfo.perWeek }} kr</span>
         </h2>
       </div>
@@ -39,7 +39,7 @@
         </template>
       </ClientOnly>
 
-      <UContainer class="w-fit mx-auto mt-5 text-center">
+      <UContainer v-if="!failedToLoad" class="w-fit mx-auto mt-5 text-center">
         <UButton
           variant="soft"
           @click="openpdf(PDFREF)"
@@ -52,13 +52,25 @@
           <i>Det kan ta en liten stund.</i>
         </p>
       </UContainer>
+      <UContainer v-else class="w-fit mx-auto mt-5 text-center text-error-500">
+        <UButton
+          variant="soft"
+          color="error"
+          :disabled="failedToLoad"
+          icon="carbon:close"
+        ></UButton>
+        <p class="text-center" v-if="loading">
+          <i>Testa att ladda om sidan!</i>
+        </p>
+      </UContainer>
     </UContainer>
   </UContainer>
 </template>
 
 <script setup lang="ts">
 const budgetStore = useBudgetStore();
-const loading = ref(false);
+const loading = ref(true);
+const failedToLoad = ref(false);
 import dayjs from "dayjs";
 const PDFREF = ref<Blob | null>(null);
 const toast = useToast();
@@ -90,7 +102,7 @@ const salaryInfo = computed(() => {
   const budget = budgetStore.balanceWOsavings.value;
 
   const perDay = Math.floor(budget / effectiveSalaryDay);
-  const perWeek = Math.floor(budget / (effectiveSalaryDay / 4));
+  const perWeek = Math.floor(budget / (effectiveSalaryDay / 7));
 
   const msg = `Det är ${effectiveSalaryDay} dagar kvar till löning. Löningen sker den ${dayjs()
     .date(25)
@@ -100,7 +112,6 @@ const salaryInfo = computed(() => {
 });
 
 async function ceratePdf() {
-  loading.value = true;
   const chartPng = pieRef.value?.getChartPng();
 
   try {
@@ -136,6 +147,8 @@ async function ceratePdf() {
         "Kunde inte skapa PDF. Försök igen senare eller kontakta support.",
       color: "error",
     });
+    loading.value = false;
+    failedToLoad.value = true;
     console.error("Failed to create PDF:", error);
   }
 }
