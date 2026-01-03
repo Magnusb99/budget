@@ -133,7 +133,7 @@ const chartImg = body.chartPng
               <tbody>
                 ${expensesRows}
                 <tr class="total">
-                  <td>Totalt</td>
+                  <td>Totala utgifter</td>
                   <td class="num nr">${formatCurrency(expenseSum)}</td>
                 </tr>
               </tbody>
@@ -180,7 +180,7 @@ const chartImg = body.chartPng
       justify-content: space-between;
       align-items: center;
     ">
-      <span>Powered by <a href="https://wolkano.se/" style="text-shadow: 1px 1px 0px #ff5400; text-decoration: none; ">Wolkano</a></span>
+      <span>Powered by <a href="https://wolkano.se/" style="font-size: 14px; text-shadow: 1px 1px 0px #ff5400; text-decoration: none; color: black; font-weight: 600;">Wolkano</a></span>
       <span>Page <span class="pageNumber"></span> / <span class="totalPages"></span></span>
     </div>
   `,
