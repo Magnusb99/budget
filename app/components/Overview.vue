@@ -124,6 +124,14 @@ async function pdfButton(
 ) {
   loading.value = true;
   const chartPng = pieRef.value?.getChartPng();
+  const win = window.open("", "_blank", "noopener,noreferrer");
+  if (!win) {
+    // om det fortfarande blockas (ovanligt), fallback till download
+    throw new Error(
+      "Popup blockerade. Tillåt popups för att förhandsvisa PDF."
+    );
+  }
+  win.document.write("<p>Skapar PDF...</p>");
   try {
     const res = await fetch("/api/pdf", {
       method: "POST",
@@ -150,10 +158,10 @@ async function pdfButton(
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
 
-    window.open(url, "_blank", "noopener,noreferrer");
+    win.location.href = url;
 
     // släpp blob-url efter en stund (så minnet inte läcker)
-    setTimeout(() => URL.revokeObjectURL(url), 30_000);
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
   } finally {
     loading.value = false;
     toast.add({
