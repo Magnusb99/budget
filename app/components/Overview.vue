@@ -15,19 +15,19 @@
       <div>
         <h2 class="flex justify-between gap-10">
           <b>Per dag: </b>
-          <span class="nr">~{{ perDay }} kr</span>
+          <span class="nr">~{{ salaryInfo.perDay }} kr</span>
         </h2>
         <USeparator class="mt-3" />
       </div>
       <div>
         <h2 class="flex justify-between gap-10">
           <b>Per vecka: </b>
-          <span class="nr">~{{ perWeek }} kr</span>
+          <span class="nr">~{{ salaryInfo.perWeek }} kr</span>
         </h2>
       </div>
       <UContainer class="w-fit my-5 border p-5 rounded-2xl">
         <Icon name="carbon:information" class="mx-auto" size="48" />
-        <p class="my-5">{{ dayToSalary }}</p>
+        <p class="my-5">{{ salaryInfo.msg }}</p>
       </UContainer>
     </UContainer>
 
@@ -42,17 +42,7 @@
       <UContainer class="w-fit mx-auto mt-5 text-center">
         <UButton
           variant="soft"
-          @click="
-            pdfButton(
-              budgetStore.balanceWOsavings.value,
-              budgetStore.state.value.incomes,
-              budgetStore.state.value.expenses,
-              budgetStore.savings.value,
-              perDay,
-              perWeek,
-              dayToSalary
-            )
-          "
+          @click="openpdf(PDFREF)"
           :disabled="loading"
           :icon="loading ? 'svg-spinners:pulse-2' : 'carbon:document-pdf'"
         >
@@ -70,68 +60,48 @@
 const budgetStore = useBudgetStore();
 const loading = ref(false);
 import dayjs from "dayjs";
+const PDFREF = ref<Blob | null>(null);
 const toast = useToast();
 const expenses = computed(() => {
   return budgetStore.state.value.expenses;
 });
 const pieRef = ref<{ getChartPng: () => string | null } | null>(null);
-const perDay = ref(0);
 
-const dayToSalary = computed(() => {
+const salaryInfo = computed(() => {
   const today = dayjs().date();
-  let days = dayjs().daysInMonth();
-  if (today > 25) {
-    days -= today;
-  }
-  let salaryDay = dayjs().date(25).date();
+  let daysInMonth = dayjs().daysInMonth();
+
+  let salaryDay = 25;
+  if (today > 25) salaryDay = daysInMonth; // eller vad du egentligen vill göra här
+
   const dayName = dayjs().date(25).format("ddd");
+
+  let effectiveSalaryDay = 25;
+  let extraText = "";
+
   if (dayName === "Sun") {
-    salaryDay -= 2;
-    perDay.value = Math.floor(budgetStore.balanceWOsavings.value / salaryDay);
-    return `Det är ${salaryDay} dagar kvar till löning. ${dayjs()
-      .date(25)
-      .format(
-        "DD[:e] "
-      )} är en söndag, så löningen kommer att ske fredagen innan.`;
+    effectiveSalaryDay = 23;
+    extraText = " är en söndag, så löningen kommer att ske fredagen innan.";
   } else if (dayName === "Sat") {
-    salaryDay -= 1;
-    perDay.value = Math.floor(budgetStore.balanceWOsavings.value / salaryDay);
-    return `Det är ${salaryDay} dagar kvar till löning. ${dayjs()
-      .date(25)
-      .format(
-        "DD[:e] "
-      )} är en lördag, så löningen kommer att ske fredagen innan.`;
-  } else {
-    perDay.value = Math.floor(budgetStore.balanceWOsavings.value / salaryDay);
-    return `Det är ${salaryDay} dagar kvar till löning. Löningen sker den ${dayjs()
-      .date(25)
-      .format("DD[:e] ")}.`;
+    effectiveSalaryDay = 24;
+    extraText = " är en lördag, så löningen kommer att ske fredagen innan.";
   }
+
+  const budget = budgetStore.balanceWOsavings.value;
+
+  const perDay = Math.floor(budget / effectiveSalaryDay);
+  const perWeek = Math.floor(budget / (effectiveSalaryDay / 4));
+
+  const msg = `Det är ${effectiveSalaryDay} dagar kvar till löning. Löningen sker den ${dayjs()
+    .date(25)
+    .format("DD[:e] ")}${extraText}`;
+
+  return { perDay, perWeek, msg };
 });
 
-const perWeek = computed(() =>
-  Math.floor(budgetStore.balanceWOsavings.value / 4)
-);
-
-async function pdfButton(
-  budget: number,
-  incomes: any[],
-  expenses: any[],
-  savings: number,
-  perDay: number,
-  perWeek: number,
-  dayToSalary: string
-) {
-  loading.value = true;
+async function ceratePdf() {
   const chartPng = pieRef.value?.getChartPng();
-  const win = window.open("", "_blank", "noopener,noreferrer");
-  if (!win) {
-    // om det fortfarande blockas (ovanligt), fallback till download
-    throw new Error(
-      "Popup blockerade. Tillåt popups för att förhandsvisa PDF."
-    );
-  }
-  win.document.write("<p>Skapar PDF...</p>");
+
   try {
     const res = await fetch("/api/pdf", {
       method: "POST",
@@ -139,13 +109,13 @@ async function pdfButton(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        budget,
-        incomes,
-        expenses,
-        savings,
-        perDay,
-        perWeek,
-        dayToSalary,
+        budget: budgetStore.balanceWOsavings.value,
+        incomes: budgetStore.state.value.incomes,
+        expenses: budgetStore.state.value.expenses,
+        savings: budgetStore.savings.value,
+        perDay: salaryInfo.value.perDay,
+        perWeek: salaryInfo.value.perWeek,
+        dayToSalary: salaryInfo.value.msg,
         chartPng,
       }),
     });
@@ -156,21 +126,31 @@ async function pdfButton(
     }
 
     const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-
-    win.location.href = url;
-
-    // släpp blob-url efter en stund (så minnet inte läcker)
-    setTimeout(() => URL.revokeObjectURL(url), 60_000);
-  } finally {
-    loading.value = false;
+    PDFREF.value = blob;
+  } catch (error) {
     toast.add({
-      title: "PDF skapad",
+      title: "Något gick fel...",
       description:
-        "Din PDF ska ha skapats och öppnats i en ny flik. OBS. Kolla din popup-blockerare om du inte ser den.",
-      color: "success",
-      duration: 10000,
+        "Kunde inte skapa PDF. Försök igen senare eller kontakta support.",
+      color: "error",
     });
+    console.error("Failed to create PDF:", error);
   }
 }
+const openpdf = (pdfBlob: Blob | null) => {
+  if (!pdfBlob) return;
+  loading.value = true;
+  const url = URL.createObjectURL(pdfBlob);
+  loading.value = false;
+  window.open(url, "_blank");
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 10000);
+};
+onMounted(async () => {
+  await nextTick();
+  await new Promise((r) => setTimeout(r, 400));
+
+  await ceratePdf();
+});
 </script>
