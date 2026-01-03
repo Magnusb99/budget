@@ -1,8 +1,25 @@
 import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 
+import fs from "node:fs";
+import path from "node:path";
+const calFont = path.resolve(process.cwd(), "public/fonts/Cal.ttf");
+const calbase = fs.readFileSync(calFont, "base64");
 
+// ✅ TTF-data-url
+const cal = `data:font/ttf;base64,${calbase}`;
 
+const majorFont = path.resolve(process.cwd(), "public/fonts/Major.ttf");
+const majorbase = fs.readFileSync(majorFont, "base64");
+
+// ✅ TTF-data-url
+const major = `data:font/ttf;base64,${majorbase}`;
+
+const notoFont = path.resolve(process.cwd(), "public/fonts/Noto.ttf");
+const notobase = fs.readFileSync(notoFont, "base64");
+
+// ✅ TTF-data-url
+const noto = `data:font/ttf;base64,${notobase}`;
 
 async function fetchLogo(){
 const res = await fetch("https://bdgt.netlify.app/logo.png");
@@ -56,7 +73,6 @@ function sumAmounts(rows: Row[]) {
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
-    const isNetlify = !!process.env.NETLIFY;
 
   const incomes: Row[] = Array.isArray(body.incomes) ? body.incomes : [];
   const expenses: Row[] = Array.isArray(body.expenses) ? body.expenses : [];
@@ -83,7 +99,24 @@ const chartImg = body.chartPng
         <meta charset="utf-8">
         <title>Budget</title>
         <style>
-       @import url('https://fonts.googleapis.com/css2?family=Cal+Sans&family=Major+Mono+Display&family=Noto+Sans+Mono:wght@100..900&display=swap');
+          @font-face {
+            font-family: "Cal Sans";
+            src: url(${cal}) format("truetype");
+            font-weight: normal;
+            font-style: normal;
+          }
+          @font-face {
+            font-family: "Major Mono Display";
+            src: url(${major}) format("truetype");
+            font-weight: normal;
+            font-style: normal;
+          }
+          @font-face {
+            font-family: "Noto Sans Mono";
+            src: url(${noto}) format("truetype");
+            font-weight: normal;
+            font-style: normal;
+          }
           * { box-sizing: border-box; }
           body { font-family: Arial, sans-serif; margin: 0; padding: 28px; color: #222; }
           h1 { margin: 0 0 16px;  font-family: "Cal Sans", sans-serif; color: #303030; }
@@ -177,7 +210,7 @@ const chartImg = body.chartPng
       justify-content: space-between;
       align-items: center;
     ">
-      <span>Powered by <img style=" height:14px; vertical-align: middle; " src="${logo}"/></span>
+      <span>Powered by <a href="https://wolkano.se/" style="text-shadow: 1px 1px 0px #ff5400; text-decoration: none; ">Wolkano</a></span>
       <span>Page <span class="pageNumber"></span> / <span class="totalPages"></span></span>
     </div>
   `,
