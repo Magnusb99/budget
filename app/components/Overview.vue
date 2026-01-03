@@ -58,7 +58,9 @@
         >
           {{ loading ? "Skapar PDF..." : "Öppna PDF" }}</UButton
         >
-        <p class="text-center" v-if="loading">Det kan ta en liten stund.</p>
+        <p class="text-center" v-if="loading">
+          <i>Det kan ta en liten stund.</i>
+        </p>
       </UContainer>
     </UContainer>
   </UContainer>
@@ -159,7 +161,7 @@ async function pdfButton(
       description:
         "Din PDF ska ha skapats och öppnats i en ny flik. OBS. Kolla din popup-blockerare om du inte ser den.",
       color: "success",
-      duration: 6000,
+      duration: 10000,
     });
   }
 }
