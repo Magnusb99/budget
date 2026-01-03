@@ -161,6 +161,7 @@ const chartImg = body.chartPng
   try {
     const logo = fetchLogo();
     const page = await browser.newPage();
+    await page.goto("about:blank", { waitUntil: "domcontentloaded" });
     await page.setContent(html, { waitUntil: "networkidle0" });
 
     const pdf = await page.pdf({
