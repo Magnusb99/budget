@@ -1,8 +1,6 @@
 import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 
-import { readFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
 
 
 
@@ -56,23 +54,8 @@ function sumAmounts(rows: Row[]) {
 }
 
 export default defineEventHandler(async (event) => {
-  const calFont = fileURLToPath(new URL( "../assets/fonts/Cal.ttf", import.meta.url));
-const calbase = Buffer.from(await readFile(calFont)).toString("base64");
 
-// ✅ TTF-data-url
-const cal = `data:font/ttf;base64,${calbase}`;
 
-const majorFont = fileURLToPath(new URL( "../assets/fonts/Major.ttf", import.meta.url));
-const majorbase = Buffer.from(await readFile(majorFont)).toString("base64");
-
-// ✅ TTF-data-url
-const major = `data:font/ttf;base64,${majorbase}`;
-
-const notoFont = fileURLToPath(new URL( "../assets/fonts/Nato.ttf", import.meta.url));
-const notobase = Buffer.from(await readFile(notoFont)).toString("base64");
-
-// ✅ TTF-data-url
-const noto = `data:font/ttf;base64,${notobase}`;
 
 
   const body = await readBody(event);
@@ -103,24 +86,7 @@ const chartImg = body.chartPng
         <meta charset="utf-8">
         <title>Budget</title>
         <style>
-          @font-face {
-            font-family: "Cal Sans";
-            src: url(${cal}) format("truetype");
-            font-weight: normal;
-            font-style: normal;
-          }
-          @font-face {
-            font-family: "Major Mono Display";
-            src: url(${major}) format("truetype");
-            font-weight: normal;
-            font-style: normal;
-          }
-          @font-face {
-            font-family: "Noto Sans Mono";
-            src: url(${noto}) format("truetype");
-            font-weight: normal;
-            font-style: normal;
-          }
+        
           * { box-sizing: border-box; }
           body { font-family: Arial, sans-serif; margin: 0; padding: 28px; color: #222; }
           h1 { margin: 0 0 16px;  font-family: "Cal Sans", sans-serif; color: #303030; }
