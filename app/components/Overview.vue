@@ -100,6 +100,7 @@ const salaryInfo = computed(() => {
 });
 
 async function ceratePdf() {
+  loading.value = true;
   const chartPng = pieRef.value?.getChartPng();
 
   try {
@@ -127,6 +128,7 @@ async function ceratePdf() {
 
     const blob = await res.blob();
     PDFREF.value = blob;
+    loading.value = false;
   } catch (error) {
     toast.add({
       title: "Något gick fel...",
