@@ -1,13 +1,14 @@
 <template>
   <div class="w-screen flex flex-wrap justify-center gap-20 py-10">
-    <div
-      class="w-full grid lg:flex justify-center grid-cols-12 items-center mb-10 px-5"
-    >
+    <div class="w-full flex justify-center items-center mb-10 px-5">
       <UTabs
         v-model="selectedTab"
-        class="utabs w-fit col-span-11"
+        class="utabs w-fit"
         :items="tabItems"
         variant="link"
+        :ui="{
+          trigger: 'cursor-pointer text-lg',
+        }"
         @update:model-value="(val) => selectTab(String(val))"
       />
     </div>

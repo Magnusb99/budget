@@ -1,7 +1,8 @@
 <template>
-  <UCard variant="subtle">
+  <UCard class="mx-5 lg:mx-0" variant="subtle">
+    <h1 class="mx-auto text-2xl text-center">Utgifter</h1>
+    <USeparator class="my-2 lg:hidden" />
     <UContainer class="flex flex-col gap-5 w-fit">
-      <h1 class="mx-auto">Fyll i dina utgifter</h1>
       <UFormField label="Sparbudget" class="">
         <USlider
           v-model="budgetStore.state.value.share"

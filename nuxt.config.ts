@@ -13,7 +13,19 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true
   },
-
+ui: {
+		theme: {
+			colors: [
+				'primary',
+				'secondary',
+				'success',
+				'info',
+				'warning',
+				'error',
+				'neutral'
+			],
+		},
+	},
   css: ['~/assets/css/main.css'],
 
   routeRules: {

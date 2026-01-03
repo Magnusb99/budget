@@ -1,9 +1,10 @@
 <template>
   <UContainer
-    class="flex flex-col items-center p-10 lg:flex-row lg:items-start lg:justify-around bg-elevated/50 ring ring-default rounded-xl gap-10"
+    class="w-[90%] lg:w-auto flex flex-col items-center p-10 lg:flex-row lg:items-start lg:justify-around bg-elevated/50 ring ring-default rounded-xl gap-10"
   >
     <UContainer class="flex flex-col gap-3">
-      <h1 class="mx-auto text-2xl font-semibold">Översikt</h1>
+      <h1 class="mx-auto text-2xl">Översikt</h1>
+
       <div>
         <h2 class="flex justify-between gap-10">
           <b>Budget: </b>
@@ -40,7 +41,6 @@
 
       <UContainer class="w-fit mx-auto mt-5 text-center">
         <UButton
-          class="cursor-pointer"
           variant="soft"
           @click="
             pdfButton(

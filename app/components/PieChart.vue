@@ -1,6 +1,6 @@
 <template>
   <div class="w-full max-w-sm mx-auto">
-    <h2 class="text-center font-semibold text-2xl mb-5">Utgifter</h2>
+    <h2 class="text-center text-2xl mb-5">Utgifter</h2>
     <canvas ref="canvasRef" />
   </div>
 </template>
