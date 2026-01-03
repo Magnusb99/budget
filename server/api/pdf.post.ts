@@ -142,7 +142,9 @@ const chartImg = body.chartPng
 
   const browser = await puppeteer.launch({
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    headless: "new",
+
+    
+    
   });
 
   try {
@@ -173,11 +175,14 @@ const chartImg = body.chartPng
 
     setHeader(event, "Content-Type", "application/pdf");
  
-      setHeader(event, "Content-Disposition", 'inline; filename="Budget.pdf"');
+    setHeader(event, "Content-Disposition", 'inline; filename="Budget.pdf"');
    
    
 
     return pdf;
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    throw error;  
   } finally {
     await browser.close();
   }

@@ -4,6 +4,11 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/ui'
   ],
+   vite: {
+    resolve: {
+      dedupe: ["vue"]
+    }
+  },
 
   devtools: {
     enabled: true
