@@ -1,22 +1,23 @@
 import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 
-import fs from "node:fs";
-import path from "node:path";
-const calFont = path.resolve(process.cwd(), "public/fonts/Cal.ttf");
-const calbase = fs.readFileSync(calFont, "base64");
+import { readFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+
+const calFont = fileURLToPath(new URL( "../assets/fonts/Cal.ttf", import.meta.url));
+const calbase = Buffer.from(await readFile(calFont)).toString("base64");
 
 // ✅ TTF-data-url
 const cal = `data:font/ttf;base64,${calbase}`;
 
-const majorFont = path.resolve(process.cwd(), "public/fonts/Major.ttf");
-const majorbase = fs.readFileSync(majorFont, "base64");
+const majorFont = fileURLToPath(new URL( "../assets/fonts/Major.ttf", import.meta.url));
+const majorbase = Buffer.from(await readFile(majorFont)).toString("base64");
 
 // ✅ TTF-data-url
 const major = `data:font/ttf;base64,${majorbase}`;
 
-const notoFont = path.resolve(process.cwd(), "public/fonts/Noto.ttf");
-const notobase = fs.readFileSync(notoFont, "base64");
+const notoFont = fileURLToPath(new URL( "../assets/fonts/Nato.ttf", import.meta.url));
+const notobase = Buffer.from(await readFile(notoFont)).toString("base64");
 
 // ✅ TTF-data-url
 const noto = `data:font/ttf;base64,${notobase}`;
