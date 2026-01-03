@@ -2,10 +2,14 @@ import puppeteer from "puppeteer";
 
 
 
+async function fetchLogo(){
 const res = await fetch("https://bdgt.netlify.app/logo.png");
 const arrayBuffer = await res.arrayBuffer();
 const logoBase64 = Buffer.from(arrayBuffer).toString("base64");
 const logo = `data:image/png;base64,${logoBase64}`;
+return logo;
+}
+
 type Row = {
   name?: string;
   amount?: number | string;
@@ -148,6 +152,7 @@ const chartImg = body.chartPng
   });
 
   try {
+    const logo = fetchLogo();
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle0" });
 
