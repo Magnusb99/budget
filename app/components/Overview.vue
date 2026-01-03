@@ -52,14 +52,15 @@
           <i>Det kan ta en liten stund.</i>
         </p>
       </UContainer>
-      <UContainer v-else class="w-fit mx-auto mt-5 text-center text-error-500">
+      <UContainer v-else class="w-fit mx-auto mt-5 text-center">
         <UButton
           variant="soft"
           color="error"
           :disabled="failedToLoad"
           icon="carbon:close"
-        ></UButton>
-        <p class="text-center" v-if="loading">
+          >PDF skapades inte</UButton
+        >
+        <p class="text-center">
           <i>Testa att ladda om sidan!</i>
         </p>
       </UContainer>
