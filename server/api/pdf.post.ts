@@ -152,16 +152,13 @@ const chartImg = body.chartPng
   const browser = await puppeteer.launch({
     executablePath,
     headless: true,
-    args: isNetlify
-      ? chromium.args
-      : ["--no-sandbox", "--disable-setuid-sandbox"],
+    args:chromium.args,
     defaultViewport: { width: 1280, height: 720 },
   });
 
   try {
     const logo = fetchLogo();
-    const context = await browser.createBrowserContext();
-    const page = await context.newPage();
+    const page = await browser.newPage();
     await page.goto("about:blank", { waitUntil: "domcontentloaded" });
     await page.setContent(html, { waitUntil: "domcontentloaded" });
 
