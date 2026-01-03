@@ -1,9 +1,8 @@
 import puppeteer from "puppeteer";
 
 import fs from "node:fs";
-import path from "node:path";
 
-const logoPath = "https://bdgt.netlify.app/public/logo.png";
+const logoPath = "https://bdgt.netlify.app/logo.png";
 const logoBase64 = fs.readFileSync(logoPath, "base64");
 const logo = `data:image/png;base64,${logoBase64}`;
 type Row = {
