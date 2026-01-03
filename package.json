@@ -16,7 +16,8 @@
     "@nuxt/ui": "^4.3.0",
     "chart.js": "^4.5.1",
     "dayjs": "^1.11.19",
-    "nuxt": "^4.2.2"
+    "nuxt": "^4.2.2",
+    "puppeteer": "^24.34.0"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.12.1",

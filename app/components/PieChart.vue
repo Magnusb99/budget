@@ -1,6 +1,6 @@
 <template>
   <div class="w-full max-w-sm mx-auto">
-    <h2 class="text-center font-semibold text-2xl">Utgifter</h2>
+    <h2 class="text-center font-semibold text-2xl mb-5">Utgifter</h2>
     <canvas ref="canvasRef" />
   </div>
 </template>
@@ -18,6 +18,7 @@ type expense = {
 const props = defineProps<{
   expenses: expense[];
 }>();
+const store = useBudgetStore();
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 let chart: Chart | null = null;
@@ -40,7 +41,7 @@ const grouped = computed(() => {
       curr.sum += e.amount;
     }
   }
-  const saved = useBudgetStore().savings;
+  const saved = store.savings;
   if (saved.value > 0) {
     map.set("Sparande", {
       label: "Sparande",
@@ -51,30 +52,35 @@ const grouped = computed(() => {
 
   return Array.from(map.values());
 });
-
-const buildChart = () => {
+function getChartParts() {
+  return {
+    labels: grouped.value.map((x) => x.label),
+    data: grouped.value.map((x) => x.sum),
+    colors: grouped.value.map((x) => x.color),
+  };
+}
+function createChart() {
   if (!canvasRef.value) return;
 
-  chart?.destroy();
+  const { labels, data, colors } = getChartParts();
 
-  const config = {
-    type: "pie" as const,
+  chart = new Chart(canvasRef.value, {
+    type: "doughnut",
     data: {
-      labels: grouped.value.map((x) => x.label),
+      labels,
       datasets: [
         {
-          data: grouped.value.map((x) => x.sum),
-          backgroundColor: grouped.value.map((x) => x.color),
+          data,
+          backgroundColor: colors,
           borderWidth: 0,
         },
       ],
     },
     options: {
       responsive: true,
+      animation: false, // ✅ gör uppdateringar snabba
       plugins: {
-        legend: {
-          position: "bottom" as const,
-        },
+        legend: { position: "bottom" },
         tooltip: {
           callbacks: {
             label: (ctx: any) => {
@@ -86,17 +92,40 @@ const buildChart = () => {
         },
       },
     },
-  };
+  });
+}
 
-  chart = new Chart(canvasRef.value, config);
-};
+function updateChart() {
+  if (!chart) return;
 
-onMounted(buildChart);
+  const { labels, data, colors } = getChartParts();
 
-watch(() => props.expenses, buildChart, { deep: true });
+  chart.data.labels = labels;
+  chart.data.datasets[0]!.data = data;
+  // Chart.js tillåter backgroundColor som (string | CanvasGradient | CanvasPattern)[]
+  (chart.data.datasets[0]!.backgroundColor as any) = colors;
+
+  chart.update("none"); // ✅ ingen animation, snabb
+}
+
+onMounted(() => {
+  createChart();
+});
+
+// ✅ lyssna på grouped istället (inte props.expenses)
+// då uppdaterar vi bara när den faktiska datastrukturen ändras.
+watch(grouped, () => {
+  if (!chart) return;
+  updateChart();
+});
 
 onBeforeUnmount(() => {
   chart?.destroy();
   chart = null;
 });
+function getChartPng() {
+  return chart?.toBase64Image("image/png", 1) ?? null;
+}
+
+defineExpose({ getChartPng });
 </script>

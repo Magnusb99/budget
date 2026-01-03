@@ -10,7 +10,6 @@
         variant="link"
         @update:model-value="(val) => selectTab(String(val))"
       />
-      <UColorModeSwitch class="col-span-1" />
     </div>
     <div class="w-full">
       <component :is="currentComponent?.component" />
